@@ -3,8 +3,10 @@ package com.practiseservices.servicespractise.Services;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.practiseservices.servicespractise.Config.JwtProvider;
 import com.practiseservices.servicespractise.Exception.FollowingException;
 import com.practiseservices.servicespractise.Exception.UserException;
 import com.practiseservices.servicespractise.Model.User;
@@ -16,6 +18,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public User createUser(User user) {
 
@@ -23,7 +28,7 @@ public class UserServiceImpl implements UserService {
         createdUser.setEmail(user.getEmail());
         createdUser.setFirstName(user.getFirstName());
         createdUser.setLastName(user.getLastName());
-        createdUser.setPassword(user.getPassword());
+        createdUser.setPassword(passwordEncoder.encode(user.getPassword()));
         createdUser.setAddress(user.getAddress());
         
         return userRepository.save(createdUser);
@@ -53,24 +58,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User followUser(Long userId1, Long userId2) {
+    public User followUser(Long reqUserId, Long userId2) {
 
-        if(!isFollowingUser(userId1, userId2)){
+        if(!isFollowingUser(reqUserId, userId2)){
 
-            User user1 = findUserById(userId1);
+            User reqUser = findUserById(reqUserId);
     
             User user2 = findUserById(userId2);
     
-            user2.getFollowers().add(user1.getId());
-            user1.getFollowings().add(user2.getId());
+            user2.getFollowers().add(reqUser.getId());
+            reqUser.getFollowings().add(user2.getId());
     
-            userRepository.save(user1);
+            userRepository.save(reqUser);
             userRepository.save(user2);
     
-            return user1;
+            return reqUser;
         }
 
-        throw new FollowingException("User with Id : "+userId1+" has alredy followed user with Id: "+userId2);
+        throw new FollowingException("User with Id : "+reqUserId+" has alredy followed user with Id: "+userId2);
 
     }
 
@@ -82,8 +87,11 @@ public class UserServiceImpl implements UserService {
         updateUser.setEmail(user.getEmail());
         updateUser.setFirstName(user.getFirstName());
         updateUser.setLastName(user.getLastName());
-        updateUser.setPassword(user.getPassword());
+        updateUser.setPassword(passwordEncoder.encode(user.getPassword()));
         updateUser.setAddress(user.getAddress());
+        if(user.getGender()!=null){
+            updateUser.setGender(user.getGender());
+        }
         
         return userRepository.save(updateUser);
     }
@@ -142,5 +150,14 @@ public class UserServiceImpl implements UserService {
         }
 
         return false;
+    }
+
+    @Override
+    public User findUserByJwt(String jwt) {
+        String email = JwtProvider.getEmailFromJwtToken(jwt);
+
+        User user = userRepository.findByEmail(email);
+
+        return user;
     }
 }

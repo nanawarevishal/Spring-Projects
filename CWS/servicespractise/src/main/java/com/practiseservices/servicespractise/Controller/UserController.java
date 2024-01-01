@@ -7,10 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,7 +20,7 @@ import com.practiseservices.servicespractise.Services.UserService;
 
 
 @RestController
-@RequestMapping("/userAPI")
+// @RequestMapping("/userAPI")
 public class UserController {
     
     @Autowired
@@ -32,57 +31,57 @@ public class UserController {
 
     //  PostMapping
 
-    @PostMapping("/createUser")
-    public User createUserHandler(@RequestBody User user){
+    // @PostMapping("/createUser")
+    // public User createUserHandler(@RequestBody User user){
        
-        User createUser = userService.createUser(user);
+    //     User createUser = userService.createUser(user);
 
-        return createUser;
-    }
+    //     return createUser;
+    // }
 
     // Putmapping 
 
-    @PutMapping("/updateUser/{id}")
-    public User updateUserHandler(@PathVariable("id")Long userId, @RequestBody User user){
-          
-        User updatedUser = userService.updateUser(user,userId);
+    @PutMapping("/api/updateUser")
+    public User updateUserHandler(@RequestHeader("Authorization")String jwt, @RequestBody User user){
+
+        User updatedUser = userService.updateUser(user,userService.findUserByJwt(jwt).getId());
 
         return updatedUser;
     }
 
     // GetMapping
-    @GetMapping("/getUser/{id}")
-    public User findUserByIdhandler(@PathVariable("id")Long userId){
+    @GetMapping("/api/getUser")
+    public User findUserByIdhandler(@RequestHeader("Authorization")String jwt){
 
-        User user = userService.findUserById(userId);
+        User user = userService.findUserById(userService.findUserByJwt(jwt).getId());
 
         return user;
     }
 
-    @GetMapping("/getAll")
+    @GetMapping("/api/getAll")
     public ResponseEntity<List<User>> getAllUserHandler(){
         List<User>user = userRepository.findAll();
 
         return new ResponseEntity<List<User>>(user,HttpStatus.FOUND);
     }
 
-    @PutMapping("/followUser/{userId1}/{userId2}")
-    public User followUserHandler(@PathVariable("userId1")Long userId1,@PathVariable("userId2")Long userId2){
+    @PutMapping("/api/followUser/{userId2}")
+    public User followUserHandler(@RequestHeader("Authorization")String jwt,@PathVariable("userId2")Long userId2){
 
-        User user = userService.followUser(userId1, userId2);
+        User user = userService.followUser(userService.findUserByJwt(jwt).getId(), userId2);
 
         return user;
 
     }
 
-    @GetMapping("/searchUser")
+    @GetMapping("/api/searchUser")
     public List<User> searchUserHandler(@RequestParam("query") String query){
 
         List<User> users = userRepository.searchUser(query);
         return users;
     }
 
-    @GetMapping("/followersUser/{id}")
+    @GetMapping("/api/followersUser/{id}")
     public List<User> getFollowerHandler(@PathVariable("id")Long userId){
 
         List<User>followers = userService.getAllFollowersUser(userId);
@@ -90,12 +89,19 @@ public class UserController {
         return followers;
     }
 
-    @GetMapping("/followingsUser/{id}")
+    @GetMapping("/api/followingsUser/{id}")
     public List<User> getFollowingHandler(@PathVariable("id")Long userId){
 
         List<User>followings = userService.getAllFollowingUser(userId);
 
         return followings;
+    }
+
+    @GetMapping("/api/user/profile")
+    public User getUserFromToken(@RequestHeader("Authorization")String jwt) {
+        User user = userService.findUserByJwt(jwt);
+
+        return user;
     }
 
 }

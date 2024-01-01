@@ -11,34 +11,44 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.practiseservices.servicespractise.Model.Post;
+import com.practiseservices.servicespractise.Model.User;
 import com.practiseservices.servicespractise.Response.ApiResponse;
 import com.practiseservices.servicespractise.Services.PostService;
+import com.practiseservices.servicespractise.Services.UserService;
 
 
 @RestController
-@RequestMapping("/postAPI")
+@RequestMapping("/api/")
 public class PostController {
 
     @Autowired
     private PostService postService;
 
+    @Autowired
+    private UserService userService;
+
     
-    @PostMapping("/createPost/user/{userId}")
-    public ResponseEntity<Post> createPost(@RequestBody Post post,@PathVariable("userId")Long userId){
+    @PostMapping("/createPost")
+    public ResponseEntity<Post> createPost(@RequestBody Post post,@RequestHeader("Authorization")String jwt){
         
-        Post createdPost = postService.createPost(post, userId);
+        User reqUser = userService.findUserByJwt(jwt);
+
+        Post createdPost = postService.createPost(post,reqUser.getId());
 
         return new ResponseEntity<Post>(createdPost,HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/deletePost/{postId}/user/{userId}")
-    public ResponseEntity<ApiResponse> deletePost(@PathVariable("postId")Long postId,@PathVariable("userId")Long userId){
+    @DeleteMapping("/deletePost/{postId}")
+    public ResponseEntity<ApiResponse> deletePost(@PathVariable("postId")Long postId,@RequestHeader("Authorization")String jwt){
 
-        postService.deletePost(postId, userId);
+        User reqUser = userService.findUserByJwt(jwt);
+
+        postService.deletePost(postId,reqUser.getId());
 
         ApiResponse response = new ApiResponse();
         response.setMsg("Post Deleted Successfully");
@@ -47,10 +57,12 @@ public class PostController {
         return new ResponseEntity<ApiResponse>(response,HttpStatus.OK);
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity <List<Post>> findPostByUserIdHandler(@PathVariable("userId")Long userId){
+    @GetMapping("/user")
+    public ResponseEntity <List<Post>> findPostByUserIdHandler(@RequestHeader("Authorization")String jwt){
 
-        List<Post>posts = postService.findPostByUserId(userId);
+        User reqUser = userService.findUserByJwt(jwt);
+
+        List<Post>posts = postService.findPostByUserId(reqUser.getId());
 
         return new ResponseEntity<List<Post>>(posts, HttpStatus.FOUND);
     }
@@ -69,18 +81,22 @@ public class PostController {
         return new ResponseEntity<List<Post>>(postService.findAllPost(), HttpStatus.FOUND);
     }
     
-    @PutMapping("/savePost/{postId}/user/{userId}")
-    public ResponseEntity<Post> savePostHandler(@PathVariable("postId")Long postId,@PathVariable("userId")Long userId){
+    @PutMapping("/savePost/{postId}")
+    public ResponseEntity<Post> savePostHandler(@PathVariable("postId")Long postId,@RequestHeader("Authorization")String jwt){
 
-        Post post = postService.savePost(postId, userId);
+        User reqUser = userService.findUserByJwt(jwt);
+
+        Post post = postService.savePost(postId, reqUser.getId());
 
         return new ResponseEntity<Post>(post, HttpStatus.OK);
     }
 
-    @PutMapping("/likePost/{postId}/user/{userId}")
-    public ResponseEntity<Post> likePostHandler(@PathVariable("postId")Long postId,@PathVariable("userId")Long userId){
+    @PutMapping("/likePost/{postId}")
+    public ResponseEntity<Post> likePostHandler(@PathVariable("postId")Long postId,@RequestHeader("Authorization")String jwt){
 
-        Post post = postService.likePost(postId, userId);
+        User reqUser = userService.findUserByJwt(jwt);
+
+        Post post = postService.likePost(postId, reqUser.getId());
 
         return new ResponseEntity<Post>(post, HttpStatus.OK);
     }

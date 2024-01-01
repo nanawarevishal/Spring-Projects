@@ -15,24 +15,20 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 
+@Entity
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
-@Entity
-public class Post {
+public class Reel {
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String caption;
-
-    private String imageUrl;
 
     private String videoUrl;
 
@@ -41,22 +37,12 @@ public class Post {
 
     private LocalDateTime createdAt;
 
-    // @OneToMany
-    // private List<User>likedPost = new ArrayList<>();
-
-    // @ManyToMany(mappedBy = "likedPosts")
-    // private List<User> likedByUsers = new ArrayList<>();
-
-    // @ManyToMany(mappedBy = "savedPosts")
-    // private List<User> savedByUsers = new ArrayList<>();
-
-    @ManyToMany(mappedBy = "likedPosts")
-    private List<User> likedByUsers = new ArrayList<>();
-
-    @ManyToMany(mappedBy = "savedPosts")
-    private List<User> savedByUsers = new ArrayList<>();
-
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "reel", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment>comments = new ArrayList<>();
 
+    @ManyToMany(mappedBy = "likedReels")
+    private List<User> likedByUsers = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "savedReels")
+    private List<User> savedByUsers = new ArrayList<>();
 }

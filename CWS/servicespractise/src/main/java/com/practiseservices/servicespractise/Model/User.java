@@ -67,4 +67,21 @@ public class User {
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "post_id"))
     private List<Post> savedPosts = new ArrayList<>();
+
+
+    @ManyToMany
+    @JsonIgnore
+    @JoinTable(
+        name = "user_liked_reels",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "reel_id"))
+    private List<Reel> likedReels = new ArrayList<>();
+
+    @ManyToMany
+    @JsonIgnore
+    @JoinTable(
+        name = "user_saved_reels",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "reel_id"))
+    private List<Reel> savedReels = new ArrayList<>();
 }
