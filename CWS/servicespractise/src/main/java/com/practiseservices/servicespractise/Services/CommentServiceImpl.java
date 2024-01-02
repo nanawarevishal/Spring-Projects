@@ -149,4 +149,17 @@ public class CommentServiceImpl implements CommentService {
 
         return reel;
     }
+
+    @Override
+    public String deleteComment(Long commentId, Long userId) {
+        
+        Comment comment = findCommentById(commentId);
+
+        if(comment.getUser().getId() == userId){
+            commentRepository.delete(comment);
+            return "Comment deleted Successfully...!";
+        }
+
+        throw new CommentException("You cannt delete other users comment...!");
+    }
 }

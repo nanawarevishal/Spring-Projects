@@ -21,4 +21,6 @@ public interface CommentService {
 
     public Reel findReelByCommentId(Long commentId);
 
+    public String deleteComment(Long commentId,Long userId);
+
 }

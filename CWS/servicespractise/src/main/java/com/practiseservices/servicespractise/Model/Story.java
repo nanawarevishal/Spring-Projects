@@ -1,11 +1,9 @@
 package com.practiseservices.servicespractise.Model;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,36 +22,29 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
-public class Comment {
+public class Story {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    private String content;
+    private String caption;
 
     @ManyToOne
     private User user;
 
-    @ManyToOne
-    @JsonIgnore
-    private Post post;
+    private String videoUrl;
 
-    @ManyToOne
-    @JsonIgnore
-    private Reel reel;
-
-    @ManyToOne
-    @JsonIgnore
-    private Story story;
-
-    @OneToMany(mappedBy = "comment",cascade = CascadeType.ALL,orphanRemoval = true)
-    @JsonIgnore
-    private List<Reply>replies = new ArrayList<>();
+    @OneToMany
+    private List<Comment>comments = new ArrayList<>();
 
     @ManyToMany
-    private List<User>liked = new ArrayList<>();
+    private List<User>likedByUser = new ArrayList<>();
+
+    @ManyToMany
+    private List<User>savedByUser = new ArrayList<>();
+
+    private LocalDateTime expirationLocalTime;
 
     private LocalDateTime createdAt;
 

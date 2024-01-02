@@ -26,4 +26,6 @@ public interface UserService {
     public boolean isFollowingUser(Long userId1,Long userId2);
 
     public User findUserByJwt(String jwt);
+
+    
 }

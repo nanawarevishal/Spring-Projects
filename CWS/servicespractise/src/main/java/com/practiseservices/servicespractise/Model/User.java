@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -84,4 +85,13 @@ public class User {
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "reel_id"))
     private List<Reel> savedReels = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "likedByUser",cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Story>likedStory = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "savedByUser",cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Story>savedStory = new ArrayList<>();
+
 }
