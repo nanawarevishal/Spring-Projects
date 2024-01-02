@@ -1,15 +1,19 @@
 package com.practiseservices.servicespractise.Services;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.practiseservices.servicespractise.Exception.ReelException;
 import com.practiseservices.servicespractise.Model.Comment;
 import com.practiseservices.servicespractise.Model.Reel;
 import com.practiseservices.servicespractise.Model.User;
 import com.practiseservices.servicespractise.Repository.ReelsRepository;
+import com.practiseservices.servicespractise.Repository.UserRepository;
 
+@Service
 public class ReelServiceImpl implements ReelService{
 
     @Autowired
@@ -17,6 +21,9 @@ public class ReelServiceImpl implements ReelService{
 
     @Autowired
     private ReelsRepository reelsRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
 
     @Override
@@ -29,6 +36,7 @@ public class ReelServiceImpl implements ReelService{
         createReel.setCaption(reel.getCaption());
         createReel.setUser(user);
         createReel.setVideoUrl(reel.getVideoUrl());
+        createReel.setCreatedAt(LocalDateTime.now());
 
         return reelsRepository.save(createReel);
     }
@@ -81,6 +89,8 @@ public class ReelServiceImpl implements ReelService{
             user.getSavedReels().add(reel);
         }
 
+        userRepository.save(user);
+
         return reel;
     }
 
@@ -98,6 +108,8 @@ public class ReelServiceImpl implements ReelService{
         else{
             user.getLikedReels().add(reel);
         }
+
+        userRepository.save(user);
 
         return reel;
     }

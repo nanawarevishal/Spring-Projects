@@ -28,8 +28,8 @@ public class CommentController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("createComment/{postId}")
-    public ResponseEntity<Comment> createComment(@RequestBody Comment comment,@PathVariable("postId")Long postId,@RequestHeader("Authorization")String jwt){
+    @PostMapping("create-post-comment/{postId}")
+    public ResponseEntity<Comment> createPostComment(@RequestBody Comment comment,@PathVariable("postId")Long postId,@RequestHeader("Authorization")String jwt){
 
         User user = userService.findUserByJwt(jwt);
 
@@ -38,7 +38,7 @@ public class CommentController {
         return new ResponseEntity<Comment>(createCommet,HttpStatus.CREATED);
     }
 
-    @PutMapping("likeComment/{commentId}")
+    @PutMapping("like-comment/{commentId}")
     public ResponseEntity<Comment> likeComment(@PathVariable("commentId")Long commentId,@RequestHeader("Authorization")String jwt){
 
         User user = userService.findUserByJwt(jwt);
@@ -71,5 +71,12 @@ public class CommentController {
         return new ResponseEntity<Post>(post, HttpStatus.FOUND);
     }
 
+    @PostMapping("create-reel-comment/{reelId}")
+    public ResponseEntity<Comment> createReelComment(@PathVariable("reelId")Long reelId,@RequestBody Comment comment,@RequestHeader("Authorization")String jwt){
 
+        User user = userService.findUserByJwt(jwt);
+        Comment createComment = commentService.createCommentReel(comment, reelId, user.getId());
+
+        return new ResponseEntity<Comment>(createComment, HttpStatus.CREATED);
+    }
 }

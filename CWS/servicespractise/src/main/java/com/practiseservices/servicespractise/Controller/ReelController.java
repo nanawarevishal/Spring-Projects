@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,9 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.practiseservices.servicespractise.Model.Comment;
 import com.practiseservices.servicespractise.Model.Reel;
 import com.practiseservices.servicespractise.Model.User;
 import com.practiseservices.servicespractise.Response.ApiResponse;
@@ -50,12 +49,10 @@ public class ReelController {
         return new ResponseEntity<List<Reel>>(reels, HttpStatus.FOUND);
     }
 
-    @GetMapping("reels-User")
-    public ResponseEntity<List<Reel>> findAllReelsOfUser(@RequestHeader("Authorization")String jwt){
+    @GetMapping("reels-User/{userId}")
+    public ResponseEntity<List<Reel>> findAllReelsOfUser(@PathVariable("userId")Long userId){
 
-        User user = userService.findUserByJwt(jwt);
-
-        List<Reel>reels = reelService.findUsersReel(user.getId());
+        List<Reel>reels = reelService.findUsersReel(userId);
 
         return new ResponseEntity<List<Reel>>(reels,  HttpStatus.FOUND);
     }
@@ -74,7 +71,7 @@ public class ReelController {
         return new ResponseEntity<ApiResponse>(response, HttpStatus.OK);
     }
 
-    @GetMapping("save-reel/{reelID}")
+    @GetMapping("save-reel/{reelId}")
     public ResponseEntity<Reel> saveReelHandler(@PathVariable("reelId")Long reelId,@RequestHeader("Authorization")String jwt){
 
         User user = userService.findUserByJwt(jwt);
@@ -84,12 +81,29 @@ public class ReelController {
         return new ResponseEntity<Reel>(reel, HttpStatus.OK);
     }
 
-    public ResponseEntity<Reel> likeReelHandler(@PathVariable("reelID")Long reelId,@RequestHeader("Authorization")String jwt){
+    @GetMapping("like-reel/{reelId}")
+    public ResponseEntity<Reel> likeReelHandler(@PathVariable("reelId")Long reelId,@RequestHeader("Authorization")String jwt){
         User user = userService.findUserByJwt(jwt);
 
         Reel reel = reelService.likeReel(reelId, user.getId());
 
         return new ResponseEntity<Reel>(reel, HttpStatus.OK);
 
+    }
+
+    @GetMapping("get-reel/{reelId}")
+    public ResponseEntity<Reel> findReelHandler(@PathVariable("reelId")Long reelId){
+
+        Reel reel = reelService.findReelById(reelId);
+
+        return new ResponseEntity<Reel>(reel,HttpStatus.FOUND);
+    }
+
+    @GetMapping("get-comment/{reelId}")
+    public ResponseEntity<List<Comment>> findAllComment(@PathVariable("reelId")Long reelId){
+
+        List<Comment>comments = reelService.findAllComments(reelId);
+
+        return new ResponseEntity<List<Comment>>(comments, HttpStatus.FOUND);
     }
 }
