@@ -163,7 +163,7 @@ public class StoryServiceImpl implements StoryService {
         for(Long id : followedUser){
 
             Story story = findAllStoryByUserId(id);
-            if(story!=null){
+            if(story!=null && story.getExpirationLocalTime().isAfter(LocalDateTime.now())){
                 stories.add(story);
             }
         }
