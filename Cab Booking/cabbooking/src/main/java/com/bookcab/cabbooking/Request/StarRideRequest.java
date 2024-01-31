@@ -1,0 +1,15 @@
+package com.bookcab.cabbooking.Request;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class StarRideRequest {
+
+    private Integer otp;
+}
