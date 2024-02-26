@@ -26,12 +26,14 @@ public class User {
 
     private String lastName;
 
-    private String gender;
-
     @Column(nullable = false)
     private String email;
 
     @Column(nullable = false)
     private String password;
+
+    private Long score;
+
+    private Long ranks;
 
 }

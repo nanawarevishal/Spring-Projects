@@ -29,7 +29,7 @@ public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-
+    
     private String content;
 
     @ManyToOne

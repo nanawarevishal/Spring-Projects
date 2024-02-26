@@ -71,7 +71,7 @@ public class QuizServiceImpl implements QuizService {
         
         Quiz quiz = findQuizById(quizId);
         List<Question>questions = quiz.getQuestions();
-
+        
         return questions;
     }
 }

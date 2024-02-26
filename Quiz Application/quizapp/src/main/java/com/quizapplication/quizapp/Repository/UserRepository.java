@@ -6,4 +6,5 @@ import com.quizapplication.quizapp.Entity.User;
 
 public interface UserRepository extends JpaRepository<User,Long> {
     
+    public User findByEmail(String email);
 }

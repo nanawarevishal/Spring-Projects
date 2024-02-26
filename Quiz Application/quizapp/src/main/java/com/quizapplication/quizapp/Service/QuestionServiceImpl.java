@@ -53,11 +53,10 @@ public class QuestionServiceImpl implements QuestionService {
     
     @Override
     public Question updateQuestion(Question question,long questionId) {
-        
+
         Question updateQuestion = findQuestionById(questionId);
 
         updateQuestion.setContent(question.getContent());
-        // updateQuestion.setQuiz(question.getQuiz());
         updateQuestion.setAnswers(question.getAnswers());
         updateQuestion.setExplanation(question.getExplanation());
         updateQuestion.setCorrectAnswer(question.getCorrectAnswer());
@@ -70,7 +69,7 @@ public class QuestionServiceImpl implements QuestionService {
     public Question findQuestionById(Long questionId) {
 
         Optional<Question>opt = questionRepository.findById(questionId);
-
+        
         if(opt.isPresent()){
             return opt.get();
         }
